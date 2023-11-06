@@ -37,9 +37,10 @@ public class Triangle {
 
     public void printTriangle() {
         points[0].printV3();
-        System.err.print(", ");
+        System.out.print(", ");
         points[1].printV3();
-        System.err.print(", ");
+        System.out.print(", ");
         points[2].printV3();
+        System.out.println();
     }
 }

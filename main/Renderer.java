@@ -13,13 +13,14 @@ public class Renderer {
     double fTheta = 0.0f;
     float offSetX = -1.0f;
     float offSetY = 0.0f;
-    float offSetZ = 20.0f;
+    float offSetZ = 15.0f;
 
     public Renderer(MainPanel mainPanel) {
         this.mainPanel = mainPanel;
         this.mat4x4 = new CustomMatrix(mainPanel);
     }
     
+
     public Mesh renderMesh(Mesh mesh) {
 
         // Update viewing angle

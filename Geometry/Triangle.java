@@ -29,12 +29,14 @@ public class Triangle {
     }
 
 
+    // Adds offset
     public void offSet(float offSetX, float offSetY, float offSetZ) {
         points[0].offSet(offSetX, offSetY, offSetZ);
         points[1].offSet(offSetX, offSetY, offSetZ);
         points[2].offSet(offSetX, offSetY, offSetZ);
     }
 
+    // Prints all of the coords of the vertices of the triangle
     public void printTriangle() {
         points[0].printV3();
         System.out.print(", ");

@@ -17,13 +17,7 @@ public class Mesh {
         }
     }
 
-    public void cloneOriginalOntoRendered() {
-        trisRendered.clear();
-        for (Triangle triangle : tris) {
-            trisRendered.add(triangle);
-        }
-    }
-
+    // Prints all of the vertices of all of the triangles of this mesh
     public void printMesh() {
         for (Triangle triangle : tris) {
             triangle.printTriangle();

@@ -28,20 +28,9 @@ public class MainPanel extends JPanel implements Runnable {
     Thread thread;
 
 
-    Map<Integer, Color> colors = Map.ofEntries(
-        entry(0, Color.BLUE),
-        entry(1, Color.CYAN),
-        entry(2, Color.DARK_GRAY),
-        entry(3, Color.GRAY),
-        entry(4, Color.GREEN),
-        entry(5, Color.LIGHT_GRAY),
-        entry(6, Color.MAGENTA),
-        entry(7, Color.ORANGE),
-        entry(8, Color.PINK),
-        entry(9, Color.RED),
-        entry(10, Color.WHITE),
-        entry(11, Color.YELLOW)
-        
+    Map<Integer, Color> colors = Map.ofEntries( entry(0, Color.BLUE), entry(1, Color.CYAN), entry(2, Color.DARK_GRAY), 
+        entry(3, Color.GRAY), entry(4, Color.GREEN), entry(5, Color.LIGHT_GRAY), entry(6, Color.MAGENTA), 
+        entry(7, Color.ORANGE), entry(8, Color.PINK), entry(9, Color.RED), entry(10, Color.WHITE), entry(11, Color.YELLOW)
     );
 
     public MainPanel() {
@@ -87,7 +76,7 @@ public class MainPanel extends JPanel implements Runnable {
             
             if (delta >= 1) {
                 
-                onUserUpdate();
+                onUpdate();
 
                 repaint();
                 
@@ -96,36 +85,38 @@ public class MainPanel extends JPanel implements Runnable {
         }
     }
 
+
+
     private void onCreate() {
 
-        //South
+        // Initialize starting cube 
+
+        // South
         meshCube.tris.add(new Triangle(0.0f, 0.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 0.0f));
         meshCube.tris.add(new Triangle(0.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 0.0f, 0.0f));
 
-        //East
+        // East
         meshCube.tris.add(new Triangle(1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f));
         meshCube.tris.add(new Triangle(1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 0.0f, 1.0f));
 
-        //North
+        // North
         meshCube.tris.add(new Triangle(1.0f, 0.0f, 1.0f,    1.0f, 1.0f, 1.0f,    0.0f, 1.0f, 1.0f));
         meshCube.tris.add(new Triangle(1.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 0.0f, 1.0f));
 
-        //West
+        // West
         meshCube.tris.add(new Triangle(0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 1.0f, 0.0f));
         meshCube.tris.add(new Triangle(0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f, 0.0f));
 
-        //Top
+        // Top
         meshCube.tris.add(new Triangle(0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 1.0f,    1.0f, 1.0f, 1.0f));
         meshCube.tris.add(new Triangle(0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 1.0f, 0.0f));
 
-        //Bottom
+        // Bottom
         meshCube.tris.add(new Triangle(1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f));
         meshCube.tris.add(new Triangle(1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f));
     }
 
-
-
-    private void onUserUpdate() {
+    private void onUpdate() {
 
         // Render meshCube
         meshCube = renderer.renderMesh(meshCube);
@@ -134,6 +125,7 @@ public class MainPanel extends JPanel implements Runnable {
 
     public void paintComponent(Graphics g) {
 
+        // Get 2D brush
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 

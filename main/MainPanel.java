@@ -2,8 +2,7 @@ package main;
 
 import javax.swing.JPanel;
 
-import Geometry.Mat4x4;
-import Geometry.MatMultiply;
+import Geometry.CustomMatrix;
 import Geometry.Mesh;
 import Geometry.Triangle;
 import java.awt.Color;
@@ -15,42 +14,35 @@ import static java.util.Map.entry;
 
 public class MainPanel extends JPanel implements Runnable {
 
-    Thread thread;
-
-    Mat4x4 mat4x4 = new Mat4x4(this);
-    MatMultiply matMultiply = new MatMultiply();
-
-    Mesh meshCube = new Mesh();
-    Mesh meshCubeDraw = new Mesh(meshCube);
-
-    public double fTheta = 0.0f;
-
-    float offSetX = -0.3f;
-    float offSetY = 0.0f;
-    float offSetZ = 20.0f;
-
-    Map<Integer, Color> colors = Map.ofEntries(
-        entry(0, Color.BLUE),
-        entry(1, Color.CYAN),
-        entry(2, Color.GRAY),
-        entry(3, Color.BLUE),
-        entry(4, Color.GREEN),
-        entry(5, Color.DARK_GRAY),
-        entry(6, Color.MAGENTA),
-        entry(7, Color.ORANGE),
-        entry(8, Color.PINK),
-        entry(9, Color.YELLOW),
-        entry(10, Color.WHITE),
-        entry(11, Color.YELLOW)
-        
-    );
-
     public final static int FPS = 60;
     public final static int SCREEN_WIDTH = 960;
     public final static int SCREEN_HEIGHT = 540;
     public final static int DRAW_SIZE = 5;
 
-    boolean shown = false;
+
+    CustomMatrix mat4x4 = new CustomMatrix(this);
+    Renderer renderer = new Renderer(this);
+    
+    Mesh meshCube = new Mesh();
+    
+    Thread thread;
+
+
+    Map<Integer, Color> colors = Map.ofEntries(
+        entry(0, Color.BLUE),
+        entry(1, Color.CYAN),
+        entry(2, Color.DARK_GRAY),
+        entry(3, Color.GRAY),
+        entry(4, Color.GREEN),
+        entry(5, Color.LIGHT_GRAY),
+        entry(6, Color.MAGENTA),
+        entry(7, Color.ORANGE),
+        entry(8, Color.PINK),
+        entry(9, Color.RED),
+        entry(10, Color.WHITE),
+        entry(11, Color.YELLOW)
+        
+    );
 
     public MainPanel() {
         
@@ -94,14 +86,12 @@ public class MainPanel extends JPanel implements Runnable {
 
             
             if (delta >= 1) {
+                
                 onUserUpdate();
-                System.out.println("FLAG");
 
-                if(!shown) {
-                    
-                }
                 repaint();
-                shown = true;
+                
+                delta--;
             }
         }
     }
@@ -136,8 +126,9 @@ public class MainPanel extends JPanel implements Runnable {
 
 
     private void onUserUpdate() {
-        fTheta += 0.00052d;
 
+        // Render meshCube
+        meshCube = renderer.renderMesh(meshCube);
     }
 
 
@@ -146,48 +137,15 @@ public class MainPanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        for(int i = 0; i < meshCube.tris.size(); i++) {
 
-            Triangle triangleRotated = new Triangle(meshCube.tris.get(i));
+        // Draw meshCube
+        for(int i = 0; i < meshCube.trisRendered.size(); i++) {
 
-            // Update values of matRot with new fTheta
-            mat4x4.updateMatRot(fTheta);
-            // Rotate around X
-            triangleRotated.points[0] = matMultiply.MultiplyMatrixVector(triangleRotated.points[0], mat4x4.matRotX);
-            triangleRotated.points[1] = matMultiply.MultiplyMatrixVector(triangleRotated.points[1], mat4x4.matRotX);
-            triangleRotated.points[2] = matMultiply.MultiplyMatrixVector(triangleRotated.points[2], mat4x4.matRotX);
-            // Rotate around Z
-            triangleRotated.points[0] = matMultiply.MultiplyMatrixVector(triangleRotated.points[0], mat4x4.matRotZ);
-            triangleRotated.points[1] = matMultiply.MultiplyMatrixVector(triangleRotated.points[1], mat4x4.matRotZ);
-            triangleRotated.points[2] = matMultiply.MultiplyMatrixVector(triangleRotated.points[2], mat4x4.matRotZ);
-
-            // Offset
-            Triangle triangleTranslated = new Triangle(triangleRotated);
-            triangleTranslated.offSet(offSetX, offSetY, offSetZ);
-    
-            // Assign projected values
-            triangleTranslated.points[0] = matMultiply.MultiplyMatrixVector(triangleTranslated.points[0], mat4x4.matProj);
-            triangleTranslated.points[1] = matMultiply.MultiplyMatrixVector(triangleTranslated.points[1], mat4x4.matProj);
-            triangleTranslated.points[2] = matMultiply.MultiplyMatrixVector(triangleTranslated.points[2], mat4x4.matProj);
-    
-            // Scale into view
-            Triangle triangleProjected = new Triangle(triangleTranslated);
-            triangleProjected.points[0].x += 1.0f; triangleProjected.points[0].y += 1.0f;
-            triangleProjected.points[1].x += 1.0f; triangleProjected.points[1].y += 1.0f;
-            triangleProjected.points[2].x += 1.0f; triangleProjected.points[2].y += 1.0f;
-            
-            triangleProjected.points[0].x *= (0.5f * (float)SCREEN_WIDTH); 
-            triangleProjected.points[0].y *= (0.5f * (float)SCREEN_HEIGHT);
-            triangleProjected.points[1].x *= (0.5f * (float)SCREEN_WIDTH); 
-            triangleProjected.points[1].y *= (0.5f * (float)SCREEN_HEIGHT);
-            triangleProjected.points[2].x *= (0.5f * (float)SCREEN_WIDTH); 
-            triangleProjected.points[2].y *= (0.5f * (float)SCREEN_HEIGHT);
-            
             // Set next color
             g2.setColor(colors.get(i));
 
             // Draw triangles
-            drawTriangle(g2, triangleProjected);
+            drawTriangle(g2, meshCube.trisRendered.get(i));
         }
     }
 }

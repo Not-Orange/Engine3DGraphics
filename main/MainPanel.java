@@ -5,6 +5,8 @@ import javax.swing.JPanel;
 import Geometry.CustomMatrix;
 import Geometry.Mesh;
 import Geometry.Triangle;
+import Geometry.Vec3;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -26,6 +28,8 @@ public class MainPanel extends JPanel implements Runnable {
     Mesh meshCube = new Mesh();
     
     Thread thread;
+
+    Vec3 cameraPos = new Vec3(0.0f, 0.0f, 0.0f);
 
 
     Map<Integer, Color> colors = Map.ofEntries( entry(0, Color.BLUE), entry(1, Color.CYAN), entry(2, Color.DARK_GRAY), 
@@ -134,7 +138,7 @@ public class MainPanel extends JPanel implements Runnable {
         for(int i = 0; i < meshCube.trisRendered.size(); i++) {
 
             // Set next color
-            g2.setColor(colors.get(i));
+            g2.setColor(colors.get(4));
 
             // Draw triangles
             drawTriangle(g2, meshCube.trisRendered.get(i));

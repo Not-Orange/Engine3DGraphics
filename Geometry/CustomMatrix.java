@@ -35,26 +35,26 @@ public class CustomMatrix {
 
 
     // Updates rotation matrices with new fTheta angle
-    public void updateRotMat(double fTheta) {
+    public void updateRotMat(double fTheta, float rotMulti) {
 
         matRotX = new float[][] {
             {1.0f,  0,                        0,                           0},
-            {0,     (float)Math.cos(fTheta),  (float)Math.sin(fTheta),     0},
-            {0,     -(float)Math.sin(fTheta), (float)Math.cos(fTheta),     0},
+            {0,     (float)Math.cos(fTheta * rotMulti),  (float)Math.sin(fTheta * rotMulti),     0},
+            {0,     -(float)Math.sin(fTheta * rotMulti), (float)Math.cos(fTheta * rotMulti),     0},
             {0,     0,                        0,                        1.0f},
         };
 
         matRotZ = new float[][] {
-            {(float)Math.cos(fTheta * 0.08f),  (float)Math.sin(fTheta * 0.08f),     0,        0},
-            {-(float)Math.sin(fTheta * 0.08f), (float)Math.cos(fTheta * 0.08f),     0,        0},
+            {(float)Math.cos(fTheta * rotMulti),  (float)Math.sin(fTheta * rotMulti),     0,        0},
+            {-(float)Math.sin(fTheta * rotMulti), (float)Math.cos(fTheta * rotMulti),     0,        0},
             {0,                                0,                                1.0f,        0},
             {0,                                0,                                   0,     1.0f}
         };
 
         matRotY = new float[][] {
-            {(float)Math.cos(fTheta * 0.6f), 0, (float)Math.sin(fTheta * 0.6f), 0},
+            {(float)Math.cos(fTheta * rotMulti), 0, (float)Math.sin(fTheta * rotMulti), 0},
             {0, 1.0f, 0, 0},
-            {-(float)Math.sin(fTheta * 0.6f), 0, (float)Math.cos(fTheta * 0.6f), 0},
+            {-(float)Math.sin(fTheta * rotMulti), 0, (float)Math.cos(fTheta * rotMulti), 0},
             {0, 0, 0, 1.0f},
         };
     }
@@ -62,20 +62,20 @@ public class CustomMatrix {
 
     // Handles multiplication of matrices with 3D vectors
     public Vec3 MultiplyVectorByMatrix(Vec3 input, float[][] mat) {
-        Vec3 output = new Vec3();
+        Vec3 v = new Vec3();
 
-        output.x = input.x*mat[0][0] + input.y*mat[1][0] + input.z*mat[2][0] + mat[3][0];
-        output.y = input.x*mat[0][1] + input.y*mat[1][1] + input.z*mat[2][1] + mat[3][1];
-        output.z = input.x*mat[0][2] + input.y*mat[1][2] + input.z*mat[2][2] + mat[3][2];
+        v.x = input.x*mat[0][0] + input.y*mat[1][0] + input.z*mat[2][0] + mat[3][0];
+        v.y = input.x*mat[0][1] + input.y*mat[1][1] + input.z*mat[2][1] + mat[3][1];
+        v.z = input.x*mat[0][2] + input.y*mat[1][2] + input.z*mat[2][2] + mat[3][2];
         float w  = input.x*mat[0][3] + input.y*mat[1][3] + input.z*mat[2][3] + mat[3][3];
 
         if(w != 0.0f) {
-            output.x /= w;
-            output.y /= w;
-            output.z /= w;
+            v.x /= w;
+            v.y /= w;
+            v.z /= w;
         }
 
-        return output;
+        return v;
     }
 
 

@@ -11,6 +11,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.Map;
 import static java.util.Map.entry;    
 
@@ -21,7 +22,7 @@ public class MainPanel extends JPanel implements Runnable {
     public final static int SCREEN_HEIGHT = 540;
 
 
-    CustomMatrix mat4x4 = new CustomMatrix(this);
+    CustomMatrix cMatrix = new CustomMatrix(this);
     Renderer renderer = new Renderer(this);
     
     Mesh meshCube = new Mesh();
@@ -85,31 +86,14 @@ public class MainPanel extends JPanel implements Runnable {
 
     private void onCreate() {
 
-        // Initialize starting cube 
+        if(meshCube.readFormFile("res\\uni.obj")) {
+            System.err.println("file read");
+        } else {
+            System.out.println("file not found");
+        }
 
-        // South
-        meshCube.tris.add(new Triangle(0.0f, 0.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 0.0f));
-        meshCube.tris.add(new Triangle(0.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 0.0f, 0.0f));
-
-        // East
-        meshCube.tris.add(new Triangle(1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f));
-        meshCube.tris.add(new Triangle(1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 0.0f, 1.0f));
-
-        // North
-        meshCube.tris.add(new Triangle(1.0f, 0.0f, 1.0f,    1.0f, 1.0f, 1.0f,    0.0f, 1.0f, 1.0f));
-        meshCube.tris.add(new Triangle(1.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 0.0f, 1.0f));
-
-        // West
-        meshCube.tris.add(new Triangle(0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 1.0f, 0.0f));
-        meshCube.tris.add(new Triangle(0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f, 0.0f));
-
-        // Top
-        meshCube.tris.add(new Triangle(0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 1.0f,    1.0f, 1.0f, 1.0f));
-        meshCube.tris.add(new Triangle(0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 1.0f, 0.0f));
-
-        // Bottom
-        meshCube.tris.add(new Triangle(1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f));
-        meshCube.tris.add(new Triangle(1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f));
+        cMatrix.updateRotMat(0.3f, 1.0f);
+        renderer.rotateMesh(meshCube, cMatrix.matRotX);
     }
 
     private void onUpdate() {
@@ -127,18 +111,24 @@ public class MainPanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
 
         // Draw all triangles in meshCube
-        meshCube.createTemporaryTrisRendered();
-        for(Triangle renTriangle : meshCube.temporaryTrisRendered) {
+        ArrayList<Triangle> temporaryTrisRendered = meshCube.copyTriangles(meshCube.trisRendered);
+        for(Triangle renTriangle : temporaryTrisRendered) {
             
             // Set a color based on light intensity
+            if(renTriangle.lightIntensity > 1 || renTriangle.lightIntensity < 0) {
+                renTriangle.lightIntensity = 0;
+            }
             Color color = new Color((int)(255 * renTriangle.lightIntensity), 0, 0);
+            // Color color = Color.red;
             // Draw triangle
             g2.setColor(color);
             g2.fill(renTriangle.constructPolygon(renTriangle));
 
+            
+
             // Draw sides with black color
-            g2.setColor(Color.black);
-            g2.draw(renTriangle.constructPolygon(renTriangle));
+            // g2.setColor(Color.black);
+            // g2.draw(renTriangle.constructPolygon(renTriangle));
         }
     }
 }

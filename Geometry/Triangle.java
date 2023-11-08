@@ -36,6 +36,13 @@ public class Triangle {
 
         lightIntensity = triangle.lightIntensity;
     }
+    public Triangle(Vec3 p1, Vec3 p2, Vec3 p3) {
+        points[0] = p1;
+        points[1] = p2;
+        points[2] = p3;
+
+        lightIntensity = 1;
+    }
 
 
     // Adds offset

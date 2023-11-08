@@ -126,18 +126,17 @@ public class MainPanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-
         // Draw all triangles in meshCube
-        for(Triangle renTriangle : meshCube.trisRendered) {
+        meshCube.createTemporaryTrisRendered();
+        for(Triangle renTriangle : meshCube.temporaryTrisRendered) {
             
             // Set a color based on light intensity
             Color color = new Color((int)(255 * renTriangle.lightIntensity), 0, 0);
-            
             // Draw triangle
             g2.setColor(color);
             g2.fill(renTriangle.constructPolygon(renTriangle));
 
-            // Draw sides
+            // Draw sides with black color
             g2.setColor(Color.black);
             g2.draw(renTriangle.constructPolygon(renTriangle));
         }

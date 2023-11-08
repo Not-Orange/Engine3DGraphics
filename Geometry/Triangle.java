@@ -5,7 +5,7 @@ import java.awt.Polygon;
 public class Triangle {
     
     public Vec3[] points = new Vec3[3];
-    public float lightIntensity = 0.0f;
+    public float lightIntensity;
 
     public Triangle() {
         Vec3 p1 = new Vec3(0, 0, 0);
@@ -15,6 +15,8 @@ public class Triangle {
         points[0] = p1;
         points[1] = p2;
         points[2] = p3;
+
+        lightIntensity = 1;
     }
     public Triangle(float p1X, float p1Y, float p1Z, float p2X, float p2Y, float p2Z, float p3X, float p3Y, float p3Z) {
         Vec3 p1 = new Vec3(p1X, p1Y, p1Z);
@@ -24,11 +26,15 @@ public class Triangle {
         points[0] = p1;
         points[1] = p2;
         points[2] = p3;
+
+        lightIntensity = 1;
     }
     public Triangle(Triangle triangle) {
         this.points[0] = new Vec3(triangle.points[0]);
         this.points[1] = new Vec3(triangle.points[1]);
         this.points[2] = new Vec3(triangle.points[2]);
+
+        lightIntensity = triangle.lightIntensity;
     }
 
 

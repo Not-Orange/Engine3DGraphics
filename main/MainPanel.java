@@ -118,7 +118,12 @@ public class MainPanel extends JPanel implements Runnable {
             }
 
             // Set a color based on light intensity
-            g2.setColor(new Color((int)(255 * renTriangle.lightIntensity), 0, 0));
+            int red = 0; int green = 180; int ble = 150;
+            Color color = new Color(
+                (int)(red * renTriangle.lightIntensity), 
+                (int)(green * renTriangle.lightIntensity), 
+                (int)(ble * renTriangle.lightIntensity));
+            g2.setColor(color);
             g2.fill(renTriangle.constructPolygon(renTriangle));
         }
     }

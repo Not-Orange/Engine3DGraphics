@@ -1,5 +1,7 @@
 package Geometry;
 
+import java.awt.Polygon;
+
 public class Triangle {
     
     public Vec3[] points = new Vec3[3];
@@ -44,5 +46,25 @@ public class Triangle {
         System.out.print(", ");
         points[2].printV3();
         System.out.println();
+    }
+
+    // Constructs polygon representation of a triangle
+    // Used for accessing drawing methods of g2 object
+    public Polygon constructPolygon(Triangle triangle) {
+        Polygon p;
+
+        int[] xPoints = new int[]{
+            (int)triangle.points[0].x,
+            (int)triangle.points[1].x,
+            (int)triangle.points[2].x
+        };
+        int[] yPoints = new int[]{
+            (int)triangle.points[0].y,
+            (int)triangle.points[1].y,
+            (int)triangle.points[2].y
+        };
+
+        p = new Polygon(xPoints, yPoints, 3);
+        return p;
     }
 }

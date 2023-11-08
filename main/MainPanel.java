@@ -55,14 +55,6 @@ public class MainPanel extends JPanel implements Runnable {
         thread.start();
     }
 
-    private void drawTriangle(Graphics2D g2, Triangle triangle) {
-        
-        g2.drawLine((int)triangle.points[0].x, (int)triangle.points[0].y, (int)triangle.points[1].x, (int)triangle.points[1].y);
-        g2.drawLine((int)triangle.points[1].x, (int)triangle.points[1].y, (int)triangle.points[2].x, (int)triangle.points[2].y);
-        g2.drawLine((int)triangle.points[0].x, (int)triangle.points[0].y, (int)triangle.points[2].x, (int)triangle.points[2].y);
-    }
-
-
 
     @Override
     public void run() {
@@ -127,6 +119,7 @@ public class MainPanel extends JPanel implements Runnable {
     }
 
 
+
     public void paintComponent(Graphics g) {
 
         // Get 2D brush
@@ -138,10 +131,10 @@ public class MainPanel extends JPanel implements Runnable {
         for(int i = 0; i < meshCube.trisRendered.size(); i++) {
 
             // Set next color
-            g2.setColor(colors.get(4));
+            g2.setColor(colors.get(0));
 
             // Draw triangles
-            drawTriangle(g2, meshCube.trisRendered.get(i));
+            g2.draw(meshCube.trisRendered.get(i).constructPolygon(meshCube.trisRendered.get(i)));
         }
     }
 }

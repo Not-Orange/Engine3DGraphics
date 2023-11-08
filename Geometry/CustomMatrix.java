@@ -7,8 +7,10 @@ public class CustomMatrix {
     MainPanel panel;
 
     public float matProj[][];
+
     public float matRotZ[][];
     public float matRotX[][];
+    public float matRotY[][];
 
     float fNear = 0.1f;
     float fFar = 1000.0f;
@@ -47,6 +49,13 @@ public class CustomMatrix {
             {-(float)Math.sin(fTheta * 0.08f), (float)Math.cos(fTheta * 0.08f),     0,        0},
             {0,                                0,                                1.0f,        0},
             {0,                                0,                                   0,     1.0f}
+        };
+
+        matRotY = new float[][] {
+            {(float)Math.cos(fTheta * 0.6f), 0, (float)Math.sin(fTheta * 0.6f), 0},
+            {0, 1.0f, 0, 0},
+            {-(float)Math.sin(fTheta * 0.6f), 0, (float)Math.cos(fTheta * 0.6f), 0},
+            {0, 0, 0, 1.0f},
         };
     }
 

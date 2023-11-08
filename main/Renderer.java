@@ -25,7 +25,7 @@ public class Renderer {
     public Mesh renderMesh(Mesh mesh) {
 
         // Update viewing angle
-        fTheta += Math.PI / 1.5f / MainPanel.FPS;
+        fTheta += Math.PI / 3.0f / MainPanel.FPS;
 
         // Wipe all rendered data before starting new render
         mesh.trisRendered.clear();
@@ -51,6 +51,11 @@ public class Renderer {
             triangleRotated.points[0] = mat4x4.MultiplyMatrixVector(triangleRotated.points[0], mat4x4.matRotZ);
             triangleRotated.points[1] = mat4x4.MultiplyMatrixVector(triangleRotated.points[1], mat4x4.matRotZ);
             triangleRotated.points[2] = mat4x4.MultiplyMatrixVector(triangleRotated.points[2], mat4x4.matRotZ);
+
+            // Rotate around Y
+            triangleRotated.points[0] = mat4x4.MultiplyMatrixVector(triangleRotated.points[0], mat4x4.matRotY);
+            triangleRotated.points[1] = mat4x4.MultiplyMatrixVector(triangleRotated.points[1], mat4x4.matRotY);
+            triangleRotated.points[2] = mat4x4.MultiplyMatrixVector(triangleRotated.points[2], mat4x4.matRotY);
 
 
             // Set offset
@@ -80,8 +85,6 @@ public class Renderer {
     
 
             // Display only if normal to a triangle is not pointing away from the viewer on z axis
-            // if(normal.z < 0) {
-            
             if (vec3.getDotProduct(normal, vec3.subtractVecs3(triangleTranslated.points[0], mainPanel.cameraPos)) < 0.0f) {
 
                 // Normalize and scale the triangle into view

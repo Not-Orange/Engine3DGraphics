@@ -25,7 +25,7 @@ public class MainPanel extends JPanel implements Runnable {
     CustomMatrix cMatrix = new CustomMatrix(this);
     Renderer renderer = new Renderer(this);
     
-    Mesh meshCube = new Mesh();
+    Mesh mesh = new Mesh();
     
     Thread thread;
 
@@ -86,21 +86,20 @@ public class MainPanel extends JPanel implements Runnable {
 
     private void onCreate() {
 
-        if(meshCube.readFormFile("res\\uni.obj")) {
+        if(mesh.readFormFile("res\\uni.obj")) {
             System.err.println("file read");
         } else {
             System.out.println("file not found");
         }
 
-        renderer.rotateMeshAroundX(meshCube, 0.6f, 1.0f);
+        mesh = renderer.rotateMeshAroundX(mesh, 0.3f, 1.0f);
     }
 
     private void onUpdate() {
 
-        // Render meshCube
-        meshCube = renderer.renderMesh(meshCube);
+        // Render mesh
+        mesh = renderer.renderMesh(mesh);
     }
-
 
 
     public void paintComponent(Graphics g) {
@@ -109,25 +108,18 @@ public class MainPanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        // Draw all triangles in meshCube
-        ArrayList<Triangle> temporaryTrisRendered = meshCube.copyTriangles(meshCube.trisRendered);
+        // Draw all triangles in a mesh
+        ArrayList<Triangle> temporaryTrisRendered = mesh.copyTriangles(mesh.trisRendered);
         for(Triangle renTriangle : temporaryTrisRendered) {
             
-            // Set a color based on light intensity
+            // Catch anomalies TODO find out why those even happen
             if(renTriangle.lightIntensity > 1 || renTriangle.lightIntensity < 0) {
                 renTriangle.lightIntensity = 0;
             }
-            Color color = new Color((int)(255 * renTriangle.lightIntensity), 0, 0);
-            // Color color = Color.red;
-            // Draw triangle
-            g2.setColor(color);
+
+            // Set a color based on light intensity
+            g2.setColor(new Color((int)(255 * renTriangle.lightIntensity), 0, 0));
             g2.fill(renTriangle.constructPolygon(renTriangle));
-
-            
-
-            // Draw sides with black color
-            // g2.setColor(Color.black);
-            // g2.draw(renTriangle.constructPolygon(renTriangle));
         }
     }
 }

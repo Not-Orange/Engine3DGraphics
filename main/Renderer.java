@@ -17,9 +17,6 @@ public class Renderer {
 
     
     double fTheta = 0.0f;
-    float offSetX = 0.0f;
-    float offSetY = 0.0f;
-    float offSetZ = 40.0f;
 
 
     public Renderer(MainPanel mainPanel) {
@@ -55,7 +52,7 @@ public class Renderer {
 
             // Set offset
             Triangle triangleTranslated = new Triangle(triangleRotated);
-            triangleTranslated.offSet(offSetX, offSetY, offSetZ);
+            triangleTranslated.offSet(0.0f, 0.0f, 40.0f);
 
 
             // Calculating normal vector
@@ -115,6 +112,8 @@ public class Renderer {
     }
 
     
+    //TODO add a method that offstes tris once from onCreate()
+    //TODO change the code in such a way that renderMesh just renders mesh and does not hanlde rotations and offsets
 
     // TODO Check if number of times that update rotMat is called can be reduced (spoiler alert: it can)
     // Rotate mesh around X axis    
@@ -132,7 +131,6 @@ public class Renderer {
         cMatrix.updateRotMat(angle, rotMulti);
         return rotateMesh(mesh, angle, rotMulti, cMatrix.matRotZ);
     }
-    
     
     // Rotates a mesh
     private Mesh rotateMesh(Mesh mesh, float angle, float rotMulti, float[][] rotMat) {
@@ -154,6 +152,7 @@ public class Renderer {
 
         return t;
     }
+
 
 
     // Comparator used for comparing 2 triangles based on which one has 

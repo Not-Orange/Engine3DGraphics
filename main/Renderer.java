@@ -1,9 +1,9 @@
 package main;
 
-import Geometry.CustomMatrix;
-import Geometry.Mesh;
-import Geometry.Triangle;
-import Geometry.Vec3;
+import geometry.CustomMatrix;
+import geometry.Mesh;
+import geometry.Triangle;
+import geometry.Vec3;
 
 public class Renderer {
 
@@ -17,7 +17,7 @@ public class Renderer {
     double fTheta = 0.0f;
     float offSetX = 0.0f;
     float offSetY = 0.0f;
-    float offSetZ = 20.0f;
+    float offSetZ = 15.0f;
 
     public Renderer(MainPanel mainPanel) {
         this.mainPanel = mainPanel;
@@ -69,26 +69,33 @@ public class Renderer {
             triangleTranslated.offSet(offSetX, offSetY, offSetZ);
 
 
-            // Assign projected values to the triangle vertices (project 3D into 2D)
-            Triangle triangleProjected = new Triangle(triangleTranslated);
-            triangleProjected.points[0] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[0], cMatrix.matProj);
-            triangleProjected.points[1] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[1], cMatrix.matProj);
-            triangleProjected.points[2] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[2], cMatrix.matProj);
-
-
             // Calculating normal vector
             Vec3 normal = new Vec3(); 
             Vec3 l1 = new Vec3(); 
             Vec3 l2 = new Vec3();
 
-            l1 = vec3.subtract(triangleProjected.points[1], triangleProjected.points[0]);
-            l2 = vec3.subtract(triangleProjected.points[2], triangleProjected.points[0]);
+            l1 = vec3.subtract(triangleTranslated.points[1], triangleTranslated.points[0]);
+            l2 = vec3.subtract(triangleTranslated.points[2], triangleTranslated.points[0]);
             normal = vec3.getCrossProduct(l1, l2);
-    
 
-            // Display only if normal to a triangle is between being parallel and at a right angle to 
-            // Vector from a camera to this triangle
-            if (vec3.getDotProduct(normal, vec3.subtract(triangleProjected.points[0], mainPanel.cameraPos)) < 0.0f) {
+            
+            // Proceed with projection only if:
+            // normal is between being parallel and at a right angle to Vector from a camera to this triangle
+            if (vec3.getDotProduct(normal, vec3.subtract(triangleTranslated.points[0], mainPanel.cameraPos)) < 0.0f) {
+                
+                // Illumination
+                Vec3 lightDir = vec3.normalize(mainPanel.lightDir);
+                // Compare how similar normal of a triangle is to the direction of the light
+                float lightInt = vec3.getDotProduct(lightDir, normal); 
+
+
+                // 3D projected into 2D space
+                // Assign projected values to the triangle vertices
+                Triangle triangleProjected = new Triangle(triangleTranslated);
+                triangleProjected.points[0] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[0], cMatrix.matProj);
+                triangleProjected.points[1] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[1], cMatrix.matProj);
+                triangleProjected.points[2] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[2], cMatrix.matProj);
+
 
                 // Normalize and scale the triangle into view
                 Triangle triangleNormalized = new Triangle(triangleProjected);
@@ -102,12 +109,12 @@ public class Renderer {
                 triangleNormalized.points[1].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
                 triangleNormalized.points[2].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
                 triangleNormalized.points[2].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
-    
-    
+                //Add illumination information
+                triangleNormalized.lightIntensity = lightInt;  
+
                 // Save rendered triangle on trisRendered
                 mesh.trisRendered.add(triangleNormalized);
             }
-            // mesh.trisRendered.add(normalTrig);
         }
         return mesh;
     }

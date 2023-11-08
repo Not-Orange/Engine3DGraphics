@@ -2,10 +2,10 @@ package main;
 
 import javax.swing.JPanel;
 
-import Geometry.CustomMatrix;
-import Geometry.Mesh;
-import Geometry.Triangle;
-import Geometry.Vec3;
+import geometry.CustomMatrix;
+import geometry.Mesh;
+import geometry.Triangle;
+import geometry.Vec3;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,7 +19,6 @@ public class MainPanel extends JPanel implements Runnable {
     public final static int FPS = 60;
     public final static int SCREEN_WIDTH = 960;
     public final static int SCREEN_HEIGHT = 540;
-    public final static int DRAW_SIZE = 5;
 
 
     CustomMatrix mat4x4 = new CustomMatrix(this);
@@ -30,6 +29,7 @@ public class MainPanel extends JPanel implements Runnable {
     Thread thread;
 
     Vec3 cameraPos = new Vec3(0.0f, 0.0f, 0.0f);
+    Vec3 lightDir = new Vec3(0.0f, 0.0f, -1.0f);
 
 
     Map<Integer, Color> colors = Map.ofEntries( entry(0, Color.BLUE), entry(1, Color.CYAN), entry(2, Color.DARK_GRAY), 
@@ -127,14 +127,19 @@ public class MainPanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
 
 
-        // Draw meshCube
-        for(int i = 0; i < meshCube.trisRendered.size(); i++) {
+        // Draw all triangles in meshCube
+        for(Triangle renTriangle : meshCube.trisRendered) {
+            
+            // Set a color based on light intensity
+            Color color = new Color((int)(255 * renTriangle.lightIntensity), 0, 0);
+            
+            // Draw triangle
+            g2.setColor(color);
+            g2.fill(renTriangle.constructPolygon(renTriangle));
 
-            // Set next color
-            g2.setColor(colors.get(7));
-
-            // Draw triangles
-            g2.fill(meshCube.trisRendered.get(i).constructPolygon(meshCube.trisRendered.get(i)));
+            // Draw sides
+            g2.setColor(Color.black);
+            g2.draw(renTriangle.constructPolygon(renTriangle));
         }
     }
 }

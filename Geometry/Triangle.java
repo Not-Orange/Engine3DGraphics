@@ -39,12 +39,12 @@ public class Triangle {
     }
 
     // Prints all of the coords of the vertices of the triangle
-    public void printTriangle() {
-        points[0].printV3();
+    public void print() {
+        points[0].print();
         System.out.print(", ");
-        points[1].printV3();
+        points[1].print();
         System.out.print(", ");
-        points[2].printV3();
+        points[2].print();
         System.out.println();
     }
 

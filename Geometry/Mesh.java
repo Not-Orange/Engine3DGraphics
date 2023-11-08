@@ -18,9 +18,9 @@ public class Mesh {
     }
 
     // Prints all of the vertices of all of the triangles of this mesh
-    public void printMesh() {
+    public void print() {
         for (Triangle triangle : tris) {
-            triangle.printTriangle();
+            triangle.print();
             System.out.println();
         }
     }

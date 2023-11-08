@@ -24,11 +24,20 @@ public class Vec3 {
     }
 
     // Prints coords of the Vector
-    public void printV3() {
+    public void print() {
         System.out.print(x + ";" + y + ";" + z);
     }
 
 
+    // Normalizes the vector
+    public Vec3 normalize(Vec3 v) {
+        float length = (float)Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+        v.x /= length;
+        v.y /= length;
+        v.z /= length;
+
+        return v;
+    }
 
     // Calculates cross product between to vectors
     public Vec3 getCrossProduct(Vec3 v1, Vec3 v2) {
@@ -38,10 +47,7 @@ public class Vec3 {
         normal.y = v1.z * v2.x - v1.x * v2.z;
         normal.z = v1.x * v2.y - v1.y * v2.x;
 
-        float length = (float)Math.sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z);
-        normal.x /= length;
-        normal.y /= length;
-        normal.z /= length;
+        normal = normalize(normal);
 
         return normal;
     }
@@ -51,7 +57,7 @@ public class Vec3 {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     }
 
-    public Vec3 subtractVecs3(Vec3 v1, Vec3 v2) {
+    public Vec3 subtract(Vec3 v1, Vec3 v2) {
         return new Vec3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
     }
 }

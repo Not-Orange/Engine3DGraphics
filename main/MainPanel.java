@@ -131,10 +131,10 @@ public class MainPanel extends JPanel implements Runnable {
         for(int i = 0; i < meshCube.trisRendered.size(); i++) {
 
             // Set next color
-            g2.setColor(colors.get(0));
+            g2.setColor(colors.get(7));
 
             // Draw triangles
-            g2.draw(meshCube.trisRendered.get(i).constructPolygon(meshCube.trisRendered.get(i)));
+            g2.fill(meshCube.trisRendered.get(i).constructPolygon(meshCube.trisRendered.get(i)));
         }
     }
 }

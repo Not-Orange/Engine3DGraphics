@@ -8,8 +8,11 @@ import Geometry.Vec3;
 public class Renderer {
 
     MainPanel mainPanel;
-    CustomMatrix mat4x4;
-    Vec3 vec3 = new Vec3();
+
+    CustomMatrix cMatrix;
+    Vec3 vec3;
+    Triangle trig;
+
     
     double fTheta = 0.0f;
     float offSetX = 0.0f;
@@ -18,7 +21,10 @@ public class Renderer {
 
     public Renderer(MainPanel mainPanel) {
         this.mainPanel = mainPanel;
-        this.mat4x4 = new CustomMatrix(mainPanel);
+
+        this.cMatrix = new CustomMatrix(mainPanel);
+        this.vec3 = new Vec3();
+        this.trig = new Triangle();
     }
     
 
@@ -35,7 +41,7 @@ public class Renderer {
         for(int i = 0; i < mesh.tris.size(); i++) {
 
             // Update values of rotation matrices with new fTheta
-            mat4x4.updateMatRot(fTheta);
+            cMatrix.updateRotMat(fTheta);
 
 
             //Extract a triangle from mesh as a copy of the original
@@ -43,67 +49,65 @@ public class Renderer {
             
 
             // Rotate around X
-            triangleRotated.points[0] = mat4x4.MultiplyMatrixVector(triangleRotated.points[0], mat4x4.matRotX);
-            triangleRotated.points[1] = mat4x4.MultiplyMatrixVector(triangleRotated.points[1], mat4x4.matRotX);
-            triangleRotated.points[2] = mat4x4.MultiplyMatrixVector(triangleRotated.points[2], mat4x4.matRotX);
+            triangleRotated.points[0] = cMatrix.MultiplyVectorByMatrix(triangleRotated.points[0], cMatrix.matRotX);
+            triangleRotated.points[1] = cMatrix.MultiplyVectorByMatrix(triangleRotated.points[1], cMatrix.matRotX);
+            triangleRotated.points[2] = cMatrix.MultiplyVectorByMatrix(triangleRotated.points[2], cMatrix.matRotX);
 
             // Rotate around Z
-            triangleRotated.points[0] = mat4x4.MultiplyMatrixVector(triangleRotated.points[0], mat4x4.matRotZ);
-            triangleRotated.points[1] = mat4x4.MultiplyMatrixVector(triangleRotated.points[1], mat4x4.matRotZ);
-            triangleRotated.points[2] = mat4x4.MultiplyMatrixVector(triangleRotated.points[2], mat4x4.matRotZ);
+            triangleRotated.points[0] = cMatrix.MultiplyVectorByMatrix(triangleRotated.points[0], cMatrix.matRotZ);
+            triangleRotated.points[1] = cMatrix.MultiplyVectorByMatrix(triangleRotated.points[1], cMatrix.matRotZ);
+            triangleRotated.points[2] = cMatrix.MultiplyVectorByMatrix(triangleRotated.points[2], cMatrix.matRotZ);
 
             // Rotate around Y
-            triangleRotated.points[0] = mat4x4.MultiplyMatrixVector(triangleRotated.points[0], mat4x4.matRotY);
-            triangleRotated.points[1] = mat4x4.MultiplyMatrixVector(triangleRotated.points[1], mat4x4.matRotY);
-            triangleRotated.points[2] = mat4x4.MultiplyMatrixVector(triangleRotated.points[2], mat4x4.matRotY);
+            triangleRotated.points[0] = cMatrix.MultiplyVectorByMatrix(triangleRotated.points[0], cMatrix.matRotY);
+            triangleRotated.points[1] = cMatrix.MultiplyVectorByMatrix(triangleRotated.points[1], cMatrix.matRotY);
+            triangleRotated.points[2] = cMatrix.MultiplyVectorByMatrix(triangleRotated.points[2], cMatrix.matRotY);
 
 
             // Set offset
             Triangle triangleTranslated = new Triangle(triangleRotated);
             triangleTranslated.offSet(offSetX, offSetY, offSetZ);
 
+
+            // Assign projected values to the triangle vertices (project 3D into 2D)
+            Triangle triangleProjected = new Triangle(triangleTranslated);
+            triangleProjected.points[0] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[0], cMatrix.matProj);
+            triangleProjected.points[1] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[1], cMatrix.matProj);
+            triangleProjected.points[2] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[2], cMatrix.matProj);
+
+
             // Calculating normal vector
             Vec3 normal = new Vec3(); 
             Vec3 l1 = new Vec3(); 
             Vec3 l2 = new Vec3();
 
-            l1.x = triangleTranslated.points[1].x - triangleTranslated.points[0].x;
-            l1.y = triangleTranslated.points[1].y - triangleTranslated.points[0].y;
-            l1.z = triangleTranslated.points[1].z - triangleTranslated.points[0].z;
-
-            l2.x = triangleTranslated.points[2].x - triangleTranslated.points[0].x;
-            l2.y = triangleTranslated.points[2].y - triangleTranslated.points[0].y;
-            l2.z = triangleTranslated.points[2].z - triangleTranslated.points[0].z;
-
-            normal = normal.getCrossProduct(l1, l2);
-
-
-            // Assign projected values to the triangle vertices (project 3D into 2D)
-            triangleTranslated.points[0] = mat4x4.MultiplyMatrixVector(triangleTranslated.points[0], mat4x4.matProj);
-            triangleTranslated.points[1] = mat4x4.MultiplyMatrixVector(triangleTranslated.points[1], mat4x4.matProj);
-            triangleTranslated.points[2] = mat4x4.MultiplyMatrixVector(triangleTranslated.points[2], mat4x4.matProj);
+            l1 = vec3.subtract(triangleProjected.points[1], triangleProjected.points[0]);
+            l2 = vec3.subtract(triangleProjected.points[2], triangleProjected.points[0]);
+            normal = vec3.getCrossProduct(l1, l2);
     
 
-            // Display only if normal to a triangle is not pointing away from the viewer on z axis
-            if (vec3.getDotProduct(normal, vec3.subtractVecs3(triangleTranslated.points[0], mainPanel.cameraPos)) < 0.0f) {
+            // Display only if normal to a triangle is between being parallel and at a right angle to 
+            // Vector from a camera to this triangle
+            if (vec3.getDotProduct(normal, vec3.subtract(triangleProjected.points[0], mainPanel.cameraPos)) < 0.0f) {
 
                 // Normalize and scale the triangle into view
-                Triangle triangleProjected = new Triangle(triangleTranslated);
-                triangleProjected.points[0].x += 1.0f; triangleProjected.points[0].y += 1.0f;
-                triangleProjected.points[1].x += 1.0f; triangleProjected.points[1].y += 1.0f;
-                triangleProjected.points[2].x += 1.0f; triangleProjected.points[2].y += 1.0f;
+                Triangle triangleNormalized = new Triangle(triangleProjected);
+                triangleNormalized.points[0].x += 1.0f; triangleNormalized.points[0].y += 1.0f;
+                triangleNormalized.points[1].x += 1.0f; triangleNormalized.points[1].y += 1.0f;
+                triangleNormalized.points[2].x += 1.0f; triangleNormalized.points[2].y += 1.0f;
                 
-                triangleProjected.points[0].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
-                triangleProjected.points[0].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
-                triangleProjected.points[1].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
-                triangleProjected.points[1].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
-                triangleProjected.points[2].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
-                triangleProjected.points[2].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
+                triangleNormalized.points[0].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
+                triangleNormalized.points[0].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
+                triangleNormalized.points[1].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
+                triangleNormalized.points[1].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
+                triangleNormalized.points[2].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
+                triangleNormalized.points[2].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
     
     
                 // Save rendered triangle on trisRendered
-                mesh.trisRendered.add(triangleProjected);
+                mesh.trisRendered.add(triangleNormalized);
             }
+            // mesh.trisRendered.add(normalTrig);
         }
         return mesh;
     }

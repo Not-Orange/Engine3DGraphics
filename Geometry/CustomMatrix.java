@@ -35,7 +35,7 @@ public class CustomMatrix {
 
 
     // Updates rotation matrices with new fTheta angle
-    public void updateMatRot(double fTheta) {
+    public void updateRotMat(double fTheta) {
 
         matRotX = new float[][] {
             {1.0f,  0,                        0,                           0},
@@ -61,7 +61,7 @@ public class CustomMatrix {
 
 
     // Handles multiplication of matrices with 3D vectors
-    public Vec3 MultiplyMatrixVector(Vec3 input, float[][] mat) {
+    public Vec3 MultiplyVectorByMatrix(Vec3 input, float[][] mat) {
         Vec3 output = new Vec3();
 
         output.x = input.x*mat[0][0] + input.y*mat[1][0] + input.z*mat[2][0] + mat[3][0];

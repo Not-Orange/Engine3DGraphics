@@ -30,25 +30,6 @@ public class Renderer {
         this.trig = new Triangle();
     }
 
-    public Mesh rotateMesh(Mesh mesh, float rotMatrix[][]) {
-
-        ArrayList<Triangle> temporary = new ArrayList<>(); 
-
-
-        // Goes through all of the triangles in the mesh
-        for(int i = 0; i < mesh.tris.size(); i++) {
-
-            //Extract a triangle from mesh as a copy of the original
-            Triangle triangleRotated = new Triangle(mesh.tris.get(i));
-            
-            // Rotate a triangle
-            triangleRotated = rotateTriangle(triangleRotated, rotMatrix, 1.0f);
-            temporary.add(triangleRotated);
-        }  
-        mesh.tris = mesh.copyTriangles(temporary);
-
-        return mesh;
-    }
     
 
     public Mesh renderMesh(Mesh mesh) {
@@ -68,9 +49,8 @@ public class Renderer {
             
 
             // Rotate a triangle
-            triangleRotated = rotateAroundY(triangleRotated, 3.0f);
-            // triangleRotated = rotateAroundX(triangleRotated, 2.0f);
-            // triangleRotated = rotateAroundZ(triangleRotated, 3.0f);
+            cMatrix.updateRotMat(fTheta, 2.5f);
+            triangleRotated = rotateTriangle(triangleRotated, cMatrix.matRotY);
 
 
             // Set offset
@@ -134,47 +114,43 @@ public class Renderer {
         return mesh;
     }
 
+    
 
-
-
-    public Triangle rotateTriangle(Triangle t, float[][] rotMatrix, float rotMulti) {
-
-        t.points[0] = cMatrix.MultiplyVectorByMatrix(t.points[0], rotMatrix);
-        t.points[1] = cMatrix.MultiplyVectorByMatrix(t.points[1], rotMatrix);
-        t.points[2] = cMatrix.MultiplyVectorByMatrix(t.points[2], rotMatrix);
-
-        return t;
+    // TODO Check if number of times that update rotMat is called can be reduced (spoiler alert: it can)
+    // Rotate mesh around X axis    
+    public Mesh rotateMeshAroundX(Mesh mesh, float angle, float rotMulti) {
+        cMatrix.updateRotMat(angle, rotMulti);
+        return rotateMesh(mesh, angle, rotMulti, cMatrix.matRotX);
     }
-
-
-    // Methods for rotating mesh around around a point of origin in X/Y/Z axis
-    public Triangle rotateAroundX(Triangle t, float rotMulti) {
-        // Update values of rotation matrices with new fTheta
-        cMatrix.updateRotMat(fTheta, rotMulti);
-
-        t.points[0] = cMatrix.MultiplyVectorByMatrix(t.points[0], cMatrix.matRotX);
-        t.points[1] = cMatrix.MultiplyVectorByMatrix(t.points[1], cMatrix.matRotX);
-        t.points[2] = cMatrix.MultiplyVectorByMatrix(t.points[2], cMatrix.matRotX);
-
-        return t;
+    // Rotate mesh around Y axis
+    public Mesh rotateMeshAroundY(Mesh mesh, float angle, float rotMulti) {
+        cMatrix.updateRotMat(angle, rotMulti);
+        return rotateMesh(mesh, angle, rotMulti, cMatrix.matRotY);
     }
-    public Triangle rotateAroundY(Triangle t, float rotMulti) {
-        // Update values of rotation matrices with new fTheta
-        cMatrix.updateRotMat(fTheta, rotMulti);
-
-        t.points[0] = cMatrix.MultiplyVectorByMatrix(t.points[0], cMatrix.matRotY);
-        t.points[1] = cMatrix.MultiplyVectorByMatrix(t.points[1], cMatrix.matRotY);
-        t.points[2] = cMatrix.MultiplyVectorByMatrix(t.points[2], cMatrix.matRotY);
-
-        return t;
+    // Rotate mesh around Z axis
+    public Mesh rotateMeshAroundZ(Mesh mesh, float angle, float rotMulti) {
+        cMatrix.updateRotMat(angle, rotMulti);
+        return rotateMesh(mesh, angle, rotMulti, cMatrix.matRotZ);
     }
-    public Triangle rotateAroundZ(Triangle t, float rotMulti) {
-        // Update values of rotation matrices with new fTheta
-        cMatrix.updateRotMat(fTheta, rotMulti);
+    
+    
+    // Rotates a mesh
+    private Mesh rotateMesh(Mesh mesh, float angle, float rotMulti, float[][] rotMat) {
+        ArrayList<Triangle> temporary = new ArrayList<>(); 
 
-        t.points[0] = cMatrix.MultiplyVectorByMatrix(t.points[0], cMatrix.matRotZ);
-        t.points[1] = cMatrix.MultiplyVectorByMatrix(t.points[1], cMatrix.matRotZ);
-        t.points[2] = cMatrix.MultiplyVectorByMatrix(t.points[2], cMatrix.matRotZ);
+        for(int i = 0; i < mesh.tris.size(); i++) {
+            Triangle triangleRotated = rotateTriangle(new Triangle(mesh.tris.get(i)), rotMat);
+            temporary.add(triangleRotated);
+        }  
+        mesh.tris = mesh.copyTriangles(temporary);
+        return mesh;
+    }
+    // Rotates a triangle
+    private Triangle rotateTriangle(Triangle t, float[][] rotMat) {
+
+        t.points[0] = cMatrix.MultiplyVectorByMatrix(t.points[0], rotMat);
+        t.points[1] = cMatrix.MultiplyVectorByMatrix(t.points[1], rotMat);
+        t.points[2] = cMatrix.MultiplyVectorByMatrix(t.points[2], rotMat);
 
         return t;
     }

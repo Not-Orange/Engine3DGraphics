@@ -92,8 +92,7 @@ public class MainPanel extends JPanel implements Runnable {
             System.out.println("file not found");
         }
 
-        cMatrix.updateRotMat(0.3f, 1.0f);
-        renderer.rotateMesh(meshCube, cMatrix.matRotX);
+        renderer.rotateMeshAroundX(meshCube, 0.6f, 1.0f);
     }
 
     private void onUpdate() {

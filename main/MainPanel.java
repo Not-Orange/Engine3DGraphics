@@ -92,15 +92,16 @@ public class MainPanel extends JPanel implements Runnable {
             System.out.println("file not found");
         }
 
-        mesh = renderer.offSetMesh(mesh, 0.0f, 0.0f, 40.0f);
-        mesh = renderer.rotateMesh(mesh, 0.01f, 'x');
+        mesh = renderer.offSetMesh(mesh, -2.0f, 0.0f, 40.0f);
+        mesh = renderer.rotateMesh(mesh, 15.0f, 'x');
+        mesh = renderer.scaleMesh(mesh, 1.0f);
     }
 
     private void onUpdate() {
 
         // Render mesh
         mesh = renderer.renderMesh(mesh);
-        mesh = renderer.contRotateMesh(mesh, 3.0f, 'y');
+        mesh = renderer.rotateMesh(mesh, 2.0f, 'y');
     }
 
 

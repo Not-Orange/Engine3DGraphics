@@ -12,6 +12,8 @@ public class CustomMatrix {
     public float matRotX[][];
     public float matRotY[][];
 
+    public float matScaling[][];
+
     float fNear = 0.1f;
     float fFar = 1000.0f;
     float fFov = 90.0f;
@@ -35,7 +37,7 @@ public class CustomMatrix {
 
 
     // Updates rotation matrices with a new angle
-    public void updateRotMatX(float angSpeed) {
+    public float[][] getRotMatX(float angSpeed) {
         angSpeed /= MainPanel.FPS;
         matRotX = new float[][] {
             {1.0f, 0, 0, 0},
@@ -43,8 +45,9 @@ public class CustomMatrix {
             {0, -(float)Math.sin(angSpeed), (float)Math.cos(angSpeed), 0},
             {0, 0, 0, 1.0f},
         };
+        return matRotX;
     }
-    public void updateRotMatY(float angSpeed) {
+    public float[][] getRotMatY(float angSpeed) {
         angSpeed /= MainPanel.FPS;
         matRotY = new float[][] {
             {(float)Math.cos(angSpeed), 0, (float)Math.sin(angSpeed), 0},
@@ -52,8 +55,9 @@ public class CustomMatrix {
             {-(float)Math.sin(angSpeed), 0, (float)Math.cos(angSpeed), 0},
             {0, 0, 0, 1.0f},
         };
+        return matRotY;
     }
-    public void updateRotMatZ(float angSpeed) {
+    public float[][] getRotMatZ(float angSpeed) {
         angSpeed /= MainPanel.FPS;
         matRotZ = new float[][] {
             {(float)Math.cos(angSpeed), (float)Math.sin(angSpeed), 0, 0},
@@ -61,6 +65,17 @@ public class CustomMatrix {
             {0, 0, 1.0f, 0},
             {0, 0, 0, 1.0f}
         };
+        return matRotZ;
+    }
+
+    public float[][] getScalingMatrix(float scale) {
+        matScaling = new float[][] {
+            {scale, 0, 0, 0},
+            {0, scale, 0, 0},
+            {0, 0, scale, 0},
+            {0, 0, 0, 1.0f}
+        };
+        return matScaling;
     }
 
 

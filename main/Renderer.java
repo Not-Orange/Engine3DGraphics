@@ -104,23 +104,28 @@ public class Renderer {
 
         return mesh;
     }
-    
+    // Scales entire mesh uniformly by a scale factor
+    public Mesh scaleMesh(Mesh mesh, float scale) {
 
-    //TODO change the code in such a way that renderMesh just renders mesh and does not hanlde rotations and offsets
-
-
-    // Continuously rotates a mesh
-    public Mesh contRotateMesh(Mesh mesh, float angularSpeed, char axis) {
-        // Update viewing angle
-        //theta += 0.1f / 3.0f / MainPanel.FPS;
+        float[][] scaleMat = cMatrix.getScalingMatrix(scale);
 
         for(int i = 0; i < mesh.tris.size(); i++) {
-            Triangle t = rotateTriangle(mesh.tris.get(i), angularSpeed, axis, mesh.origin);
-            mesh.tris.set(i, t);
-        } 
+            Triangle triangle = mesh.tris.get(i);
+
+            triangle.offSet(-mesh.origin.x, -mesh.origin.y, -mesh.origin.z);
+            
+            triangle.points[0] = cMatrix.MultiplyVectorByMatrix(triangle.points[0], scaleMat);
+            triangle.points[1] = cMatrix.MultiplyVectorByMatrix(triangle.points[1], scaleMat);
+            triangle.points[2] = cMatrix.MultiplyVectorByMatrix(triangle.points[2], scaleMat);
+
+            triangle.offSet(mesh.origin.x, mesh.origin.y, mesh.origin.z);
+        }  
 
         return mesh;
     }
+
+
+
     // Rotates a mesh
     public Mesh rotateMesh(Mesh mesh, float angularSpeed, char axis) {
 
@@ -137,16 +142,13 @@ public class Renderer {
         float[][] rotMat;
         switch (axis) {
             case 'x':
-                cMatrix.updateRotMatX(angularSpeed);
-                rotMat = cMatrix.matRotX;
+                rotMat = cMatrix.getRotMatX(angularSpeed);
                 break;
             case 'y':
-                cMatrix.updateRotMatY(angularSpeed);
-                rotMat = cMatrix.matRotY;
+                rotMat = cMatrix.getRotMatY(angularSpeed);
                 break;
             case 'z':
-                cMatrix.updateRotMatZ(angularSpeed);
-                rotMat = cMatrix.matRotZ;
+                rotMat = cMatrix.getRotMatZ(angularSpeed);
                 break;
             default:
                 return t;

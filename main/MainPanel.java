@@ -93,13 +93,14 @@ public class MainPanel extends JPanel implements Runnable {
         }
 
         mesh = renderer.offSetMesh(mesh, 0.0f, 0.0f, 40.0f);
-        mesh = renderer.rotateMeshAroundX(mesh, 0.3f, 1.0f);
+        mesh = renderer.rotateMesh(mesh, 0.01f, 'x');
     }
 
     private void onUpdate() {
 
         // Render mesh
         mesh = renderer.renderMesh(mesh);
+        mesh = renderer.contRotateMesh(mesh, 3.0f, 'y');
     }
 
 

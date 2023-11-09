@@ -11,11 +11,12 @@ public class Mesh {
     public ArrayList<Triangle> trisRendered = new ArrayList<>();
 
     public Vec3 origin = new Vec3(0.0f, 0.0f, 0.0f);
-    
+
 
     public Mesh() {
     }
     public Mesh(Mesh mesh) {
+        this.origin = mesh.origin;
         for (Triangle triangle : mesh.tris) {
             this.tris.add(new Triangle(triangle));
         }

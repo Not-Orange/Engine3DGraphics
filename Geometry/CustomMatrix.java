@@ -4,7 +4,7 @@ import java.lang.Math;
 import main.MainPanel;
 
 public class CustomMatrix {
-    MainPanel panel;
+    MainPanel mainPanel;
 
     public float matProj[][];
 
@@ -21,7 +21,7 @@ public class CustomMatrix {
 
     // Constructor - generates default projection matrix
     public CustomMatrix(MainPanel mainPanel) {
-        this.panel = mainPanel;
+        this.mainPanel = mainPanel;
 
 
         matProj = new float[][] {
@@ -34,28 +34,32 @@ public class CustomMatrix {
 
 
 
-    // Updates rotation matrices with new fTheta angle
-    public void updateRotMat(double fTheta, float rotMulti) {
-
+    // Updates rotation matrices with a new angle
+    public void updateRotMatX(float angSpeed) {
+        angSpeed /= MainPanel.FPS;
         matRotX = new float[][] {
             {1.0f, 0, 0, 0},
-            {0, (float)Math.cos(fTheta * rotMulti), (float)Math.sin(fTheta * rotMulti), 0},
-            {0, -(float)Math.sin(fTheta * rotMulti), (float)Math.cos(fTheta * rotMulti), 0},
+            {0, (float)Math.cos(angSpeed), (float)Math.sin(angSpeed), 0},
+            {0, -(float)Math.sin(angSpeed), (float)Math.cos(angSpeed), 0},
             {0, 0, 0, 1.0f},
         };
-
-        matRotZ = new float[][] {
-            {(float)Math.cos(fTheta * rotMulti),  (float)Math.sin(fTheta * rotMulti),     0,        0},
-            {-(float)Math.sin(fTheta * rotMulti), (float)Math.cos(fTheta * rotMulti),     0,        0},
-            {0,                                0,                                1.0f,        0},
-            {0,                                0,                                   0,     1.0f}
-        };
-
+    }
+    public void updateRotMatY(float angSpeed) {
+        angSpeed /= MainPanel.FPS;
         matRotY = new float[][] {
-            {(float)Math.cos(fTheta * rotMulti), 0, (float)Math.sin(fTheta * rotMulti), 0},
+            {(float)Math.cos(angSpeed), 0, (float)Math.sin(angSpeed), 0},
             {0, 1.0f, 0, 0},
-            {-(float)Math.sin(fTheta * rotMulti), 0, (float)Math.cos(fTheta * rotMulti), 0},
+            {-(float)Math.sin(angSpeed), 0, (float)Math.cos(angSpeed), 0},
             {0, 0, 0, 1.0f},
+        };
+    }
+    public void updateRotMatZ(float angSpeed) {
+        angSpeed /= MainPanel.FPS;
+        matRotZ = new float[][] {
+            {(float)Math.cos(angSpeed), (float)Math.sin(angSpeed), 0, 0},
+            {-(float)Math.sin(angSpeed), (float)Math.cos(angSpeed), 0, 0},
+            {0, 0, 1.0f, 0},
+            {0, 0, 0, 1.0f}
         };
     }
 

@@ -10,6 +10,9 @@ public class Mesh {
     public ArrayList<Triangle> tris = new ArrayList<>();
     public ArrayList<Triangle> trisRendered = new ArrayList<>();
 
+    public Vec3 origin = new Vec3(0.0f, 0.0f, 0.0f);
+    
+
     public Mesh() {
     }
     public Mesh(Mesh mesh) {
@@ -20,7 +23,7 @@ public class Mesh {
             this.trisRendered.add(new Triangle(triangle));
         }
     }
-    
+
 
 
     // Makes a copy of a trisRendered

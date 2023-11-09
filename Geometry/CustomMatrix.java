@@ -38,10 +38,10 @@ public class CustomMatrix {
     public void updateRotMat(double fTheta, float rotMulti) {
 
         matRotX = new float[][] {
-            {1.0f,  0,                        0,                           0},
-            {0,     (float)Math.cos(fTheta * rotMulti),  (float)Math.sin(fTheta * rotMulti),     0},
-            {0,     -(float)Math.sin(fTheta * rotMulti), (float)Math.cos(fTheta * rotMulti),     0},
-            {0,     0,                        0,                        1.0f},
+            {1.0f, 0, 0, 0},
+            {0, (float)Math.cos(fTheta * rotMulti), (float)Math.sin(fTheta * rotMulti), 0},
+            {0, -(float)Math.sin(fTheta * rotMulti), (float)Math.cos(fTheta * rotMulti), 0},
+            {0, 0, 0, 1.0f},
         };
 
         matRotZ = new float[][] {

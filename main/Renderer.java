@@ -44,16 +44,13 @@ public class Renderer {
             //Extract a triangle from mesh as a copy of the original
             Triangle triangleRotated = new Triangle(mesh.tris.get(i));
             
-
             // Rotate a triangle
             cMatrix.updateRotMat(fTheta, 2.5f);
-            triangleRotated = rotateTriangle(triangleRotated, cMatrix.matRotY);
-
+            triangleRotated = rotateTriangle(triangleRotated, cMatrix.matRotY, mesh.origin);
 
             // Set offset
             Triangle triangleTranslated = new Triangle(triangleRotated);
-            triangleTranslated.offSet(0.0f, 0.0f, 40.0f);
-
+            // triangleTranslated.offSet(0.0f, 0.0f, 40.0f);
 
             // Calculating normal vector
             Vec3 normal = new Vec3(); 
@@ -63,7 +60,6 @@ public class Renderer {
             l1 = vec3.subtract(triangleTranslated.points[1], triangleTranslated.points[0]);
             l2 = vec3.subtract(triangleTranslated.points[2], triangleTranslated.points[0]);
             normal = vec3.getCrossProduct(l1, l2);
-
             
             // Proceed with projection only if:
             // normal is between being parallel and at a right angle to Vector from a camera to this triangle
@@ -74,14 +70,12 @@ public class Renderer {
                 // Compare how similar normal of a triangle is to the direction of the light
                 float lightInt = vec3.getDotProduct(lightDir, normal); 
 
-
                 // 3D projected into 2D space
                 // Assign projected values to the triangle vertices
                 Triangle triangleProjected = new Triangle(triangleTranslated);
                 triangleProjected.points[0] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[0], cMatrix.matProj);
                 triangleProjected.points[1] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[1], cMatrix.matProj);
                 triangleProjected.points[2] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[2], cMatrix.matProj);
-
 
                 // Normalize and scale the triangle into view
                 Triangle triangleNormalized = new Triangle(triangleProjected);
@@ -111,6 +105,20 @@ public class Renderer {
         return mesh;
     }
 
+
+
+
+    public Mesh offSetMesh(Mesh mesh, float offSetX, float offSetY, float offSetZ) {
+
+        mesh.origin.offSet(offSetX, offSetY, offSetZ);
+
+        for(int i = 0; i < mesh.tris.size(); i++) {
+            Triangle triangle = mesh.tris.get(i);
+            triangle.offSet(offSetX, offSetY, offSetZ);
+        }  
+
+        return mesh;
+    }
     
     //TODO add a method that offstes tris once from onCreate()
     //TODO change the code in such a way that renderMesh just renders mesh and does not hanlde rotations and offsets
@@ -134,21 +142,27 @@ public class Renderer {
     
     // Rotates a mesh
     private Mesh rotateMesh(Mesh mesh, float angle, float rotMulti, float[][] rotMat) {
+
         ArrayList<Triangle> temporary = new ArrayList<>(); 
 
         for(int i = 0; i < mesh.tris.size(); i++) {
-            Triangle triangleRotated = rotateTriangle(new Triangle(mesh.tris.get(i)), rotMat);
+            Triangle triangleRotated = rotateTriangle(new Triangle(mesh.tris.get(i)), rotMat, mesh.origin);
             temporary.add(triangleRotated);
         }  
         mesh.tris = mesh.copyTriangles(temporary);
+
         return mesh;
     }
     // Rotates a triangle
-    private Triangle rotateTriangle(Triangle t, float[][] rotMat) {
+    private Triangle rotateTriangle(Triangle t, float[][] rotMat, Vec3 origin) {
+
+        t.offSet(-origin.x, -origin.y, -origin.z);
 
         t.points[0] = cMatrix.MultiplyVectorByMatrix(t.points[0], rotMat);
         t.points[1] = cMatrix.MultiplyVectorByMatrix(t.points[1], rotMat);
         t.points[2] = cMatrix.MultiplyVectorByMatrix(t.points[2], rotMat);
+
+        t.offSet(origin.x, origin.y, origin.z);
 
         return t;
     }

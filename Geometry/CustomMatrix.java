@@ -79,22 +79,29 @@ public class CustomMatrix {
     }
 
 
-    // Handles multiplication of matrices with 3D vectors
-    public Vec3 MultiplyVectorByMatrix(Vec3 input, float[][] mat) {
-        Vec3 v = new Vec3();
+    public Triangle multiTrigByMatrix(Triangle trig, float[][] mat) {
+        trig.points[0] = multiVecByMatrix(trig.points[0], mat);
+        trig.points[1] = multiVecByMatrix(trig.points[1], mat);
+        trig.points[2] = multiVecByMatrix(trig.points[2], mat);
+        return trig;
+    }
 
-        v.x = input.x*mat[0][0] + input.y*mat[1][0] + input.z*mat[2][0] + mat[3][0];
-        v.y = input.x*mat[0][1] + input.y*mat[1][1] + input.z*mat[2][1] + mat[3][1];
-        v.z = input.x*mat[0][2] + input.y*mat[1][2] + input.z*mat[2][2] + mat[3][2];
-        float w  = input.x*mat[0][3] + input.y*mat[1][3] + input.z*mat[2][3] + mat[3][3];
+    // Handles multiplication of matrices with 3D vectors
+    public Vec3 multiVecByMatrix(Vec3 vIn, float[][] mat) {
+        Vec3 vOut = new Vec3();
+
+        vOut.x = vIn.x*mat[0][0] + vIn.y*mat[1][0] + vIn.z*mat[2][0] + mat[3][0];
+        vOut.y = vIn.x*mat[0][1] + vIn.y*mat[1][1] + vIn.z*mat[2][1] + mat[3][1];
+        vOut.z = vIn.x*mat[0][2] + vIn.y*mat[1][2] + vIn.z*mat[2][2] + mat[3][2];
+        float w  = vIn.x*mat[0][3] + vIn.y*mat[1][3] + vIn.z*mat[2][3] + mat[3][3];
 
         if(w != 0.0f) {
-            v.x /= w;
-            v.y /= w;
-            v.z /= w;
+            vOut.x /= w;
+            vOut.y /= w;
+            vOut.z /= w;
         }
 
-        return v;
+        return vOut;
     }
 
 

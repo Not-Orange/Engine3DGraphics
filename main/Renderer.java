@@ -30,7 +30,6 @@ public class Renderer {
         // Wipe all rendered data before starting new render
         mesh.trisRendered.clear();
 
-
         // Go through all of the triangles in the mesh
         for(int i = 0; i < mesh.tris.size(); i++) {
 
@@ -58,9 +57,7 @@ public class Renderer {
                 // 3D projected into 2D space
                 // Assign projected values to the triangle vertices
                 Triangle triangleProjected = new Triangle(triangle);
-                triangleProjected.points[0] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[0], cMatrix.matProj);
-                triangleProjected.points[1] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[1], cMatrix.matProj);
-                triangleProjected.points[2] = cMatrix.MultiplyVectorByMatrix(triangleProjected.points[2], cMatrix.matProj);
+                triangleProjected = cMatrix.multiTrigByMatrix(triangleProjected, cMatrix.matProj);
 
                 // Normalize and scale the triangle into view
                 Triangle triangleNormalized = new Triangle(triangleProjected);
@@ -114,9 +111,7 @@ public class Renderer {
 
             triangle.offSet(-mesh.origin.x, -mesh.origin.y, -mesh.origin.z);
             
-            triangle.points[0] = cMatrix.MultiplyVectorByMatrix(triangle.points[0], scaleMat);
-            triangle.points[1] = cMatrix.MultiplyVectorByMatrix(triangle.points[1], scaleMat);
-            triangle.points[2] = cMatrix.MultiplyVectorByMatrix(triangle.points[2], scaleMat);
+            triangle = cMatrix.multiTrigByMatrix(triangle, scaleMat);
 
             triangle.offSet(mesh.origin.x, mesh.origin.y, mesh.origin.z);
         }  
@@ -158,9 +153,7 @@ public class Renderer {
         // Rotations are performed around (1, 1, 1) or (0, 0, 0) (I don't rally know)
         t.offSet(-origin.x, -origin.y, -origin.z);
 
-        t.points[0] = cMatrix.MultiplyVectorByMatrix(t.points[0], rotMat);
-        t.points[1] = cMatrix.MultiplyVectorByMatrix(t.points[1], rotMat);
-        t.points[2] = cMatrix.MultiplyVectorByMatrix(t.points[2], rotMat);
+        t = cMatrix.multiTrigByMatrix(t, rotMat);
 
         // Set back old coordinates
         t.offSet(origin.x, origin.y, origin.z);

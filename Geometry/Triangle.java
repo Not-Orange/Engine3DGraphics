@@ -3,9 +3,10 @@ package geometry;
 import java.awt.Polygon;
 
 public class Triangle {
-    
+
     public Vec3[] points = new Vec3[3];
     public float lightIntensity;
+
 
     public Triangle() {
         Vec3 p1 = new Vec3(0, 0, 0);

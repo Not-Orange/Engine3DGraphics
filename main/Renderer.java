@@ -1,5 +1,6 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import geometry.CustomMatrix;
 import geometry.Mesh;
@@ -25,72 +26,67 @@ public class Renderer {
 
     
 
-    public Mesh renderMesh(Mesh mesh) {
+    public ArrayList<Triangle> renderMesh(ArrayList<Triangle> tris) {
 
-        // Wipe all rendered data before starting new render
-        mesh.trisRendered.clear();
+        ArrayList<Triangle> trisRendered = new ArrayList<>();
+
+        // Illumination
+        Vec3 lightDir = vec3.normalize(mainPanel.lightDir);
 
         // Go through all of the triangles in the mesh
-        for(int i = 0; i < mesh.tris.size(); i++) {
+        for(int i = 0; i < tris.size(); i++) {
 
             //Extract a triangle from mesh as a copy of the original
-            Triangle triangle = new Triangle(mesh.tris.get(i));
+            Triangle triangle = new Triangle(tris.get(i));
             
             // Calculate normal vector
-            Vec3 normal = new Vec3(); 
-            Vec3 l1 = new Vec3(); 
-            Vec3 l2 = new Vec3();
-
-            l1 = vec3.subtract(triangle.points[1], triangle.points[0]);
-            l2 = vec3.subtract(triangle.points[2], triangle.points[0]);
-            normal = vec3.getCrossProduct(l1, l2);
+            Vec3 l1 = vec3.subtract(triangle.points[1], triangle.points[0]);
+            Vec3 l2 = vec3.subtract(triangle.points[2], triangle.points[0]);
+            Vec3 normal = vec3.getCrossProduct(l1, l2);
             
             // Proceed with projection only if:
             // normal is between being parallel and at a right angle to Vector from a camera to this triangle
             if (vec3.getDotProduct(normal, vec3.subtract(triangle.points[0], mainPanel.cameraPos)) < 0.0f) {
-                
-                // Illumination
-                Vec3 lightDir = vec3.normalize(mainPanel.lightDir);
-                // Compare how similar normal of a triangle is to the direction of the light
-                float lightInt = vec3.getDotProduct(lightDir, normal); 
 
                 // 3D projected into 2D space
                 // Assign projected values to the triangle vertices
-                Triangle triangleProjected = new Triangle(triangle);
-                triangleProjected = cMatrix.multiTrigByMatrix(triangleProjected, cMatrix.matProj);
+                triangle = cMatrix.multiTrigByMatrix(triangle, cMatrix.matProj);
 
                 // Normalize and scale the triangle into view
-                Triangle triangleNormalized = new Triangle(triangleProjected);
-                triangleNormalized.points[0].x += 1.0f; triangleNormalized.points[0].y += 1.0f;
-                triangleNormalized.points[1].x += 1.0f; triangleNormalized.points[1].y += 1.0f;
-                triangleNormalized.points[2].x += 1.0f; triangleNormalized.points[2].y += 1.0f;
+                triangle.points[0].x += 1.0f; triangle.points[0].y += 1.0f;
+                triangle.points[1].x += 1.0f; triangle.points[1].y += 1.0f;
+                triangle.points[2].x += 1.0f; triangle.points[2].y += 1.0f;
                 
-                triangleNormalized.points[0].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
-                triangleNormalized.points[0].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
-                triangleNormalized.points[1].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
-                triangleNormalized.points[1].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
-                triangleNormalized.points[2].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
-                triangleNormalized.points[2].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
-                //Add illumination information
-                triangleNormalized.lightIntensity = lightInt;  
+                triangle.points[0].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
+                triangle.points[0].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
+                triangle.points[1].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
+                triangle.points[1].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
+                triangle.points[2].x *= (0.5f * (float)MainPanel.SCREEN_WIDTH); 
+                triangle.points[2].y *= (0.5f * (float)MainPanel.SCREEN_HEIGHT);
+
+                // Add illumination information
+                // Compare how similar normal of a triangle is to the direction of the light
+                triangle.lightIntensity = vec3.getDotProduct(lightDir, normal);  
 
                 // Save rendered triangle on trisRendered
-                mesh.trisRendered.add(triangleNormalized);
+                trisRendered.add(triangle);
             }
 
             // Sort all triangles in mesh such that the ones with the 
             // largest values of Z (the furthest from observer) are first.
             // When drawing triangles that are closer than others will then be
             // drawn on top of them.
-            mesh.trisRendered.sort(new trigComparator());
+            trisRendered.sort(new trigComparator());
         }
-        return mesh;
+
+        System.out.println("done");
+        return trisRendered;
     }
 
 
 
     // Offsets whole mesh, saves a new origin point for that mesh
-    public Mesh offSetMesh(Mesh mesh, float offSetX, float offSetY, float offSetZ) {
+    public Mesh offsetMesh(Mesh mesh, float offSetX, float offSetY, float offSetZ) {
 
         mesh.origin.offSet(offSetX, offSetY, offSetZ);
 
@@ -125,8 +121,7 @@ public class Renderer {
     public Mesh rotateMesh(Mesh mesh, float angularSpeed, char axis) {
 
         for(int i = 0; i < mesh.tris.size(); i++) {
-            Triangle triangleRotated = rotateTriangle(mesh.tris.get(i), angularSpeed, axis, mesh.origin);
-            mesh.tris.set(i, triangleRotated);
+            mesh.tris.set(i, rotateTriangle(mesh.tris.get(i), angularSpeed, axis, mesh.origin));
         } 
 
         return mesh;

@@ -1,19 +1,16 @@
 package main;
 
 import javax.swing.JPanel;
-
 import geometry.CustomMatrix;
 import geometry.Mesh;
 import geometry.Triangle;
 import geometry.Vec3;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.Map;
-import static java.util.Map.entry;    
+import java.awt.Point;
+
 
 public class MainPanel extends JPanel implements Runnable {
 
@@ -32,11 +29,8 @@ public class MainPanel extends JPanel implements Runnable {
     Vec3 cameraPos = new Vec3(0.0f, 0.0f, 0.0f);
     Vec3 lightDir = new Vec3(0.0f, 0.0f, -1.0f);
 
+    Point[][] depthBuffer;
 
-    Map<Integer, Color> colors = Map.ofEntries( entry(0, Color.BLUE), entry(1, Color.CYAN), entry(2, Color.DARK_GRAY), 
-        entry(3, Color.GRAY), entry(4, Color.GREEN), entry(5, Color.LIGHT_GRAY), entry(6, Color.MAGENTA), 
-        entry(7, Color.ORANGE), entry(8, Color.PINK), entry(9, Color.RED), entry(10, Color.WHITE), entry(11, Color.YELLOW)
-    );
 
     public MainPanel() {
         
@@ -48,6 +42,8 @@ public class MainPanel extends JPanel implements Runnable {
 
         onCreate();
         startThread();
+
+        depthBuffer = createDepthBuffer();
     }
     
     public void startThread() {
@@ -86,23 +82,40 @@ public class MainPanel extends JPanel implements Runnable {
 
     private void onCreate() {
 
-        if(mesh.readFormFile("res\\uni.obj")) {
+        if(mesh.readFormFile("res\\VideoShip.obj")) {
             System.err.println("file read");
         } else {
             System.out.println("file not found");
         }
 
-        mesh = renderer.offSetMesh(mesh, -2.0f, 0.0f, 40.0f);
-        mesh = renderer.rotateMesh(mesh, 15.0f, 'x');
-        mesh = renderer.scaleMesh(mesh, 1.0f);
+        mesh = renderer.offsetMesh(mesh, 0.0f, 0.0f, 10.0f);
+        mesh = renderer.rotateMesh(mesh, 109999.0f, 'x');
+        mesh = renderer.scaleMesh(mesh, 0.2f);
     }
+
+
+
+    private Point[][] createDepthBuffer() {
+        Point[][] depthBuffer = new Point[SCREEN_HEIGHT][SCREEN_WIDTH];
+
+        for(int y = 0; y < SCREEN_HEIGHT; y++) {
+            for(int x = 0; x < SCREEN_WIDTH; x++) {
+                depthBuffer[y][x] = new Point(x, y);
+            }
+        }
+
+        return depthBuffer;
+    }
+
+
 
     private void onUpdate() {
 
         // Render mesh
-        mesh = renderer.renderMesh(mesh);
+        mesh.trisRendered = renderer.renderMesh(mesh.tris);
         mesh = renderer.rotateMesh(mesh, 2.0f, 'y');
     }
+
 
 
     public void paintComponent(Graphics g) {
@@ -111,9 +124,17 @@ public class MainPanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
+
+        paintMesh(g2, mesh);
+    }
+
+
+
+    // Draws the entire mesh
+    private void paintMesh(Graphics2D g2, Mesh m) {
+
         // Draw all triangles in a mesh
-        ArrayList<Triangle> temporaryTrisRendered = mesh.copyTriangles(mesh.trisRendered);
-        for(Triangle renTriangle : temporaryTrisRendered) {
+        for(Triangle renTriangle : m.trisRendered) {
             
             // Catch anomalies TODO find out why those even happen
             if(renTriangle.lightIntensity > 1 || renTriangle.lightIntensity < 0) {
@@ -121,11 +142,11 @@ public class MainPanel extends JPanel implements Runnable {
             }
 
             // Set a color based on light intensity
-            int red = 0; int green = 180; int ble = 150;
+            int red = 0; int green = 180; int blue = 150;
             Color color = new Color(
                 (int)(red * renTriangle.lightIntensity), 
                 (int)(green * renTriangle.lightIntensity), 
-                (int)(ble * renTriangle.lightIntensity));
+                (int)(blue * renTriangle.lightIntensity));
             g2.setColor(color);
             g2.fill(renTriangle.constructPolygon(renTriangle));
         }

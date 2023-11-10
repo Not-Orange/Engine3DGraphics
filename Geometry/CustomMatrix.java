@@ -25,7 +25,6 @@ public class CustomMatrix {
     public CustomMatrix(MainPanel mainPanel) {
         this.mainPanel = mainPanel;
 
-
         matProj = new float[][] {
             {fAspectRatio * fFovRad, 0,       0,                                  0   },
             {0,                      fFovRad, 0,                                  0   },
@@ -90,15 +89,15 @@ public class CustomMatrix {
     public Vec3 multiVecByMatrix(Vec3 vIn, float[][] mat) {
         Vec3 vOut = new Vec3();
 
-        vOut.x = vIn.x*mat[0][0] + vIn.y*mat[1][0] + vIn.z*mat[2][0] + mat[3][0];
-        vOut.y = vIn.x*mat[0][1] + vIn.y*mat[1][1] + vIn.z*mat[2][1] + mat[3][1];
-        vOut.z = vIn.x*mat[0][2] + vIn.y*mat[1][2] + vIn.z*mat[2][2] + mat[3][2];
-        float w  = vIn.x*mat[0][3] + vIn.y*mat[1][3] + vIn.z*mat[2][3] + mat[3][3];
+        vOut.x = vIn.x*mat[0][0] + vIn.y*mat[1][0] + vIn.z*mat[2][0] + vIn.w*mat[3][0];
+        vOut.y = vIn.x*mat[0][1] + vIn.y*mat[1][1] + vIn.z*mat[2][1] + vIn.w*mat[3][1];
+        vOut.z = vIn.x*mat[0][2] + vIn.y*mat[1][2] + vIn.z*mat[2][2] + vIn.w*mat[3][2];
+        vOut.w = vIn.x*mat[0][3] + vIn.y*mat[1][3] + vIn.z*mat[2][3] + vIn.w*mat[3][3];
 
-        if(w != 0.0f) {
-            vOut.x /= w;
-            vOut.y /= w;
-            vOut.z /= w;
+        if(vOut.w != 0.0f) {
+            vOut.x /= vOut.w;
+            vOut.y /= vOut.w;
+            vOut.z /= vOut.w;
         }
 
         return vOut;

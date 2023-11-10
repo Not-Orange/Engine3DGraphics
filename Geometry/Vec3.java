@@ -1,17 +1,17 @@
 package geometry;
 
 public class Vec3 {
-    public float x, y, z;
+    public float x, y, z, w;
 
     // Constructors
     public Vec3() {
-        this.x = 0; this.y = 0; this.z = 0;
+        this.x = 0; this.y = 0; this.z = 0; this.w = 1;
     }
     public Vec3(float x, float y, float z) {
-        this.x = x; this.y = y; this.z = z;
+        this.x = x; this.y = y; this.z = z; this.w = 1; 
     }
     public Vec3(Vec3 vec3) {
-        this.x = vec3.x; this.y = vec3.y; this.z = vec3.z;
+        this.x = vec3.x; this.y = vec3.y; this.z = vec3.z; this.w = vec3.w;
     }
 
 
@@ -59,5 +59,8 @@ public class Vec3 {
 
     public Vec3 subtract(Vec3 v1, Vec3 v2) {
         return new Vec3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+    }
+    public Vec3 add(Vec3 v1, Vec3 v2) {
+        return new Vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
     }
 }

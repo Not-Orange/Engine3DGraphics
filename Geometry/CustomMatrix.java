@@ -1,4 +1,4 @@
-package geometry;
+package Geometry;
 
 import java.lang.Math;
 import main.MainPanel;

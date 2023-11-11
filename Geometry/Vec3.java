@@ -1,4 +1,4 @@
-package geometry;
+package Geometry;
 
 public class Vec3 {
     public float x, y, z, w;

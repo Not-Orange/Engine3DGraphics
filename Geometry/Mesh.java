@@ -1,4 +1,4 @@
-package Geometry;
+package geometry;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

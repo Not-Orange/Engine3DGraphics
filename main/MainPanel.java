@@ -2,10 +2,10 @@ package main;
 
 import javax.swing.JPanel;
 
-import Geometry.CustomMatrix;
-import Geometry.Mesh;
-import Geometry.Triangle;
-import Geometry.Vec3;
+import geometry.CustomMatrix;
+import geometry.Mesh;
+import geometry.Triangle;
+import geometry.Vec3;
 
 import java.awt.Color;
 import java.awt.Dimension;

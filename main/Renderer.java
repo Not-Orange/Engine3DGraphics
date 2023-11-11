@@ -3,10 +3,10 @@ package main;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import Geometry.CustomMatrix;
-import Geometry.Mesh;
-import Geometry.Triangle;
-import Geometry.Vec3;
+import geometry.CustomMatrix;
+import geometry.Mesh;
+import geometry.Triangle;
+import geometry.Vec3;
 
 public class Renderer {
 
